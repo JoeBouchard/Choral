@@ -1,14 +1,14 @@
 import { NextPage } from "next";
-import { Lyrics } from "./api/random";
+import { Lyrics } from "../functions/getLyrics";
 
-const Random: NextPage<Lyrics> = ({ lyrics, artist, song, rank }) => {
+const Random: NextPage<Lyrics> = ({ lyrics, artist, title, cover }) => {
   return (
     <div>
       <p>
-        {song} by {artist}. Currently #{rank}
+        {title} by {artist}
       </p>
       {lyrics.split("\n").map((l) => (
-        <p>{l}</p>
+        <p key={l}>{l}</p>
       ))}
     </div>
   );

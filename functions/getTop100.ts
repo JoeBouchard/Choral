@@ -1,3 +1,4 @@
+// @ts-nocheck
 import cheerio from "cheerio";
 import moment from "moment";
 import { htmlToText } from "html-to-text";
