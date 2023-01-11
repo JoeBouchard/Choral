@@ -127,7 +127,9 @@ const Home: NextPage<{ lyrics: string }> = ({ lyrics }) => {
 
 Home.getInitialProps = async (context) => {
   console.log(context.req?.headers, context.asPath);
-  const res = await fetch(`http://${context.req?.headers.host}/api/hello`);
+  const res = await fetch(
+    `http://${context.req?.headers.host}/api/random?artist=Ben Rector`
+  );
   const lyrics = await res.json();
   return { lyrics: lyrics.lyrics };
 };
