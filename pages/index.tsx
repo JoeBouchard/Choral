@@ -4,6 +4,7 @@ import { Inter } from "@next/font/google";
 import styles from "../styles/Home.module.css";
 import lyricsSearcher from "../functions/getLyrics";
 import { NextPage } from "next";
+import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -127,10 +128,10 @@ const Home: NextPage<{ lyrics: string }> = ({ lyrics }) => {
 
 Home.getInitialProps = async (context) => {
   console.log(context.req?.headers, context.asPath);
-  const res = await fetch(
+  const res = await axios.get(
     `http://${context.req?.headers.host}/api/random?artist=Ben Rector`
   );
-  const lyrics = await res.json();
+  const lyrics = res.data;
   return { lyrics: lyrics.lyrics };
 };
 
