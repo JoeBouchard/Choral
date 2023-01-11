@@ -23,6 +23,7 @@ const getLyrics = async (artist: string, song: string) => {
   const res = await fetch(`${ROOT_URL}${parsedArtist}/${parsedSong}.html`);
   const html = await res.text();
   const rawText = htmlToText(html);
+  console.error(rawText);
   const parsedText = rawText.split(`"${song}"`)[1].split("\n\n\n\n")[0];
   console.log(parsedText);
   const cover = rawText.match(/\[\/images\/albums\/.*\]/g) || [""];
