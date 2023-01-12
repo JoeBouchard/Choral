@@ -15,7 +15,6 @@ const Random: NextPage<Lyrics> = ({ lyrics, artist, title, cover }) => {
 };
 
 Random.getInitialProps = async (context) => {
-  console.log(context.req?.headers, context.asPath);
   const res = await fetch(`http://${context.req?.headers.host}/api/random`);
   const lyrics: Lyrics = await res.json();
   return lyrics;

@@ -23,7 +23,6 @@ export default async function handler(
   while (lyrics.lyrics.length === 0) {
     const choice = songs[Math.floor(Math.random() * songs.length)];
     lyrics = await lyricsSearcher(choice.artist, choice.title);
-    console.log(lyrics, choice);
   }
 
   res.status(200).json(lyrics);
