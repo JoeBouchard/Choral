@@ -13,6 +13,7 @@ export interface Song {
   title: string;
   cover?: string;
   rank?: number;
+  url?: string;
 }
 
 export const getChart = async (date: Date) => {

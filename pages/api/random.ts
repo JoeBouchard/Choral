@@ -15,14 +15,16 @@ export default async function handler(
     const artist = req.query.artist as string;
 
     if (artist) songs = await getArtistSongs(artist);
+    if (songs.length === 0) res.end(404);
   }
 
-  if (songs.length == 0) songs = await getChart(new Date());
+  if (songs.length === 0) songs = await getChart(new Date());
 
-  let lyrics: Lyrics = { lyrics: "", title: "", artist: "", cover: "" };
-  while (lyrics.lyrics.length === 0) {
+  let lyrics: Lyrics | undefined;
+  while (!lyrics || lyrics.lyrics.length === 0) {
     const choice = songs[Math.floor(Math.random() * songs.length)];
-    lyrics = await lyricsSearcher(choice.artist, choice.title);
+    console.log(choice);
+    lyrics = await lyricsSearcher(choice.artist, choice.title, choice.url);
   }
 
   res.status(200).json(lyrics);

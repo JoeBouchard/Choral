@@ -2,13 +2,49 @@ import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "@next/font/google";
 import styles from "../styles/Home.module.css";
-import lyricsSearcher from "../functions/getLyrics";
 import { NextPage } from "next";
-import axios from "axios";
+import { useEffect, useReducer, useState } from "react";
+import { Lyrics } from "../functions/getLyrics";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const Home: NextPage<{ lyrics: string }> = ({ lyrics }) => {
+const Home: NextPage<Lyrics> = ({ lyrics, title }) => {
+  const [guess, setGuess] = useState("");
+  const [guessed, addGuessed] = useReducer(
+    (state: String[], word: string) => [...state, word],
+    []
+  );
+  const [titleGuess, setTitleGuess] = useState("");
+
+  useEffect(() => {
+    console.log(guess);
+    const formattedGuess = guess.toLowerCase().replaceAll(/[^A-Za-z 0-9]/g, "");
+    const formattedLyrics = lyrics
+      .toLowerCase()
+      .replaceAll(/[^A-Za-z \n\-0-9]/g, "")
+      .replaceAll(/[\n\-]/g, " ")
+      .split(" ");
+    console.log(formattedLyrics);
+    if (!guessed.includes(guess) && formattedLyrics.includes(formattedGuess)) {
+      addGuessed(formattedGuess);
+      setGuess("");
+    }
+  }, [guess]);
+
+  useEffect(() => {
+    if (
+      titleGuess.toLowerCase().replaceAll(/[^A-Za-z 0-9]/g, "") ===
+      title.toLowerCase().replaceAll(/[^A-Za-z 0-9]/g, "")
+    ) {
+      lyrics
+        .toLowerCase()
+        .replaceAll(/[^A-Za-z \n\-0-9]/g, "")
+        .replaceAll(/[\n\-]/g, " ")
+        .split(" ")
+        .forEach((l) => addGuessed(l));
+    }
+  }, [titleGuess]);
+
   return (
     <>
       <Head>
@@ -17,7 +53,39 @@ const Home: NextPage<{ lyrics: string }> = ({ lyrics }) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {lyrics}
+      <input
+        value={titleGuess}
+        onChange={(e) => setTitleGuess(e.target.value)}
+      ></input>
+      <br></br>
+      <input value={guess} onChange={(e) => setGuess(e.target.value)}></input>
+      <div>
+        {lyrics.split("\n").map((l, k) => (
+          <div key={k}>
+            {l.split(/[ \-]/).map((w, wk) => (
+              <>
+                <span
+                  style={{
+                    color: guessed.includes(
+                      w.toLowerCase().replaceAll(/\W/g, "")
+                    )
+                      ? "#070"
+                      : "#700",
+                    backgroundColor: guessed.includes(
+                      w.toLowerCase().replaceAll(/\W/g, "")
+                    )
+                      ? "#00000000"
+                      : "#700",
+                  }}
+                  key={`${k} ${wk}`}
+                >
+                  {w}
+                </span>{" "}
+              </>
+            ))}
+          </div>
+        ))}
+      </div>
       <main className={styles.main}>
         <div className={styles.description}>
           <p>
@@ -128,10 +196,10 @@ const Home: NextPage<{ lyrics: string }> = ({ lyrics }) => {
 
 Home.getInitialProps = async (context) => {
   const res = await fetch(
-    `http://${context.req?.headers.host}/api/random?artist=Ben Rector`
+    `http://${context.req?.headers.host}/api/random?artist=Taylor Swift`
   );
-  const lyrics = await res.json();
-  return { lyrics: lyrics.lyrics };
+  const lyrics: Lyrics = await res.json();
+  return lyrics;
 };
 
 export default Home;
