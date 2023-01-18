@@ -16,8 +16,18 @@ export const getArtistSongs = async (artist: string) => {
     headers: headers,
   });
   const html = await res.text();
-  const rawText = htmlToText(html);
+  let rawText = htmlToText(html);
+  if (rawText.includes("SEARCH RESULTS FOR")) {
+    const path = rawText.match(/artist\/.*\/[0-9]*/g);
+    if (!path) return [];
+    console.log(path);
+    const res2 = await fetch(`https://www.lyrics.com/${path[0]}`);
+    const html2 = await res2.text();
+    rawText = htmlToText(html2);
+  }
   //   \/[0-9]*\/[A-Za-z\+]*\/[A-Za-z0-9\%\+]
+  // console.log(rawText);
+
   rawText
     .match(/\/lyric.*\/[0-9]*\/[A-Za-z\+]*\/[A-Za-z0-9\%\+]*/g)
     ?.forEach((title) =>

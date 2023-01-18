@@ -12,16 +12,13 @@ export interface Lyrics {
   lyrics: string;
 }
 
-const getLyrics = async (artist: string, song: string, url?: string) => {
+export const getLyrics = async (artist: string, song: string, url?: string) => {
   const lyrics: Lyrics = {
     artist,
-    title: song,
+    title: song.replaceAll(/ [(\[].*/g, ""),
     cover: "",
     lyrics: "",
   };
-
-  const parsedArtist = artist.replaceAll(/\W/g, "").toLowerCase();
-  const parsedSong = song.replaceAll(/\W/g, "").toLowerCase();
 
   if (!url) return;
 
@@ -45,5 +42,3 @@ const getLyrics = async (artist: string, song: string, url?: string) => {
   if (!lyrics.lyrics || lyrics.lyrics.endsWith("...")) return;
   return lyrics;
 };
-
-export default getLyrics;

@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getArtistSongs } from "../../functions/getArtistSongs";
-import lyricsSearcher from "../../functions/getLyrics";
+import { getLyrics } from "../../functions/getLyrics";
 import { getChart, Song } from "../../functions/getTop100";
 import { Lyrics } from "../../functions/getLyrics";
 
@@ -24,7 +24,7 @@ export default async function handler(
   while (!lyrics || lyrics.lyrics.length === 0) {
     const choice = songs[Math.floor(Math.random() * songs.length)];
     console.log(choice);
-    lyrics = await lyricsSearcher(choice.artist, choice.title, choice.url);
+    lyrics = await getLyrics(choice.artist, choice.title, choice.url);
   }
 
   res.status(200).json(lyrics);
