@@ -36,7 +36,7 @@ const Home: NextPage = () => {
             The song guessing game
           </Heading>
           <Text align="center">
-            Enter an artist's name below to get started
+            Enter the name of an artist or band below to get started
           </Text>
           <Input
             value={artist}
