@@ -26,19 +26,21 @@ export const getArtistSongs = async (artist: string) => {
     rawText = htmlToText(html2);
   }
   //   \/[0-9]*\/[A-Za-z\+]*\/[A-Za-z0-9\%\+]
-  // console.log(rawText);
 
   rawText
     .match(/\/lyric.*\/[0-9]*\/[A-Za-z\+]*\/[A-Za-z0-9\%\+]*/g)
-    ?.forEach((title) =>
-      songs.push({
-        artist,
-        title: decodeURI(title.split("/")[4])
-          .replaceAll("+", " ")
-          .replaceAll("]", ""),
-        url: title.replaceAll("]", ""),
-      })
-    );
-  console.log(songs.length);
+    ?.forEach((rawTitle) => {
+      const title = decodeURI(rawTitle.split("/")[4])
+        .replaceAll("+", " ")
+        .replaceAll("]", "")
+        .replaceAll(/[\[(].*/g, "");
+
+      if (!songs.find((s) => s.title === title))
+        songs.push({
+          artist,
+          title,
+          url: rawTitle.replaceAll("]", ""),
+        });
+    });
   return songs;
 };
