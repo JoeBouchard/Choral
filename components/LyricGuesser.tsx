@@ -11,6 +11,10 @@ import {
   Heading,
   Skeleton,
   Progress,
+  Grid,
+  SimpleGrid,
+  Flex,
+  Spacer,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
@@ -197,8 +201,8 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics }) => {
           100
         }
       />
-      <HStack spacing={8}>
-        <Heading>
+      <Flex>
+        <Heading size={{ base: "lg", md: "xl" }}>
           {title.split(" ").map((t, k) => (
             <>
               <motion.span
@@ -218,68 +222,66 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics }) => {
             </>
           ))}
         </Heading>
+        <Spacer />
+        <Grid templateColumns={{ sm: "100px", md: "100px 100px" }} gap={2}>
+          <Button
+            onClick={() => {
+              const formattedLyrics = lyrics
+                .toLowerCase()
+                .replaceAll(/[^A-Za-z \n\-0-9]/g, "")
+                .replaceAll(/[\n\-]/g, " ")
+                .split(" ")
+                .filter((word) => !guessed.found.includes(word));
 
-        <Button
-          onClick={() => {
-            const formattedLyrics = lyrics
-              .toLowerCase()
-              .replaceAll(/[^A-Za-z \n\-0-9]/g, "")
-              .replaceAll(/[\n\-]/g, " ")
-              .split(" ")
-              .filter((word) => !guessed.found.includes(word));
+              let choice = "";
+              let counter = 0;
 
-            let choice = "";
-            let counter = 0;
+              while (guessed.found.includes(choice) && counter < 20) {
+                choice =
+                  formattedLyrics[
+                    Math.floor(Math.random() * formattedLyrics.length)
+                  ];
+                counter += 1;
+              }
 
-            while (guessed.found.includes(choice) && counter < 20) {
-              choice =
-                formattedLyrics[
-                  Math.floor(Math.random() * formattedLyrics.length)
-                ];
-              counter += 1;
-            }
-
-            addGuessed({ word: choice, valid: true });
-            guessBtn.current?.focus();
-          }}
-          colorScheme="purple"
-        >
-          Hint?
-        </Button>
-        <Button
-          onClick={() => {
-            setTitleGuess(title);
-          }}
-          colorScheme="red"
-        >
-          Give Up?
-        </Button>
-      </HStack>
-      <HStack mb={2} spacing={24}>
+              addGuessed({ word: choice, valid: true });
+              guessBtn.current?.focus();
+            }}
+            colorScheme="purple"
+          >
+            Hint?
+          </Button>
+          <Button
+            onClick={() => {
+              setTitleGuess(title);
+            }}
+            colorScheme="red"
+          >
+            Give Up?
+          </Button>
+        </Grid>
+      </Flex>
+      <HStack my={2} spacing={12}>
         <Stack>
-          <Text>Guess a word</Text>
-          <HStack>
-            <Input
-              bg="white"
-              _focus={lastGuess && inputVariations[lastGuess]}
-              ref={guessBtn}
-              value={guess}
-              onChange={(e) => setGuess(e.target.value)}
-              boxShadow="none"
-              borderWidth="2px"
-              onKeyDown={(e) => {
-                if (e.code === "Enter") {
-                  guessWord();
-                }
-              }}
-            />
-            <Button colorScheme="green" onClick={guessWord}>
-              Guess
-            </Button>
-          </HStack>
+          <Input
+            bg="white"
+            _focus={lastGuess && inputVariations[lastGuess]}
+            ref={guessBtn}
+            value={guess}
+            onChange={(e) => setGuess(e.target.value)}
+            boxShadow="none"
+            borderWidth="2px"
+            onKeyDown={(e) => {
+              if (e.code === "Enter") {
+                guessWord();
+              }
+            }}
+          />
+          <Button colorScheme="green" onClick={guessWord}>
+            Guess a word
+          </Button>
         </Stack>
         <Stack>
-          <Text>Guess the title</Text>
           <Input
             bg="white"
             value={titleGuess}
@@ -287,6 +289,7 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics }) => {
             borderColor="blue.700"
             shadow="md"
           />
+          <Button colorScheme="purple">Guess the title</Button>
         </Stack>
       </HStack>
       <div
