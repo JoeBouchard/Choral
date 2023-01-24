@@ -15,7 +15,7 @@ const Artist: NextPage<Lyrics> = (lyrics) => {
   return (
     <>
       <Head>
-        <title>Choral {lyrics.artist} Free Play</title>
+        <title>Choral {lyrics.artist} Challenge</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -28,14 +28,15 @@ export const getServerSideProps: GetServerSideProps<Lyrics> = async (
   context
 ) => {
   if (context.query.artist) {
-    console.log(
-      `http://${context.req.headers.host}/api/random?artist=${context.query.artist}`
-    );
     const lyricsRequest = await fetch(
-      `http://${context.req.headers.host}/api/random?artist=${context.query.artist}`
+      `http://${context.req.headers.host}/api/random?artist=${context.query.artist}&challenge=true`
     );
-    const lyrics = (await lyricsRequest.json()) as Lyrics;
-    return { props: lyrics };
+    try {
+      const lyrics = (await lyricsRequest.json()) as Lyrics;
+      return { props: lyrics };
+    } catch (e) {
+      return { notFound: true };
+    }
   }
   return { notFound: true };
 };

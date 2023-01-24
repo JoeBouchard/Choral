@@ -7,17 +7,46 @@ import {
   Container,
   Heading,
   Input,
+  Spinner,
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 const inter = Inter({ subsets: ["latin"] });
 
 const Home: NextPage = () => {
   const [artist, setArtist] = useState("");
+  const [valid, setValid] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setValid(false);
+    setLoading(true);
+    const newArtist = artist
+      .split(" ")
+      .map((n) => n.charAt(0).toUpperCase() + n.slice(1))
+      .join(" ");
+
+    if (artist !== newArtist) setArtist(newArtist);
+    const i = setTimeout(() => {
+      fetch(`/api/verify?artist=${artist}`)
+        .then((d) => d.json())
+        .then((r) => {
+          console.log(r);
+          setValid(r.valid);
+          setLoading(false);
+        });
+    }, 500);
+
+    return () => clearInterval(i);
+  }, [artist]);
+
+  useEffect(() => {
+    console.log(!valid, loading);
+  }, [valid, loading]);
 
   return (
     <>
@@ -26,7 +55,7 @@ const Home: NextPage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Container bgColor="white" borderRadius={4} p={4} mt={"20vh"} shadow="xl">
+      <Container bgColor="white" borderRadius={4} p={4} mt={"10vh"} shadow="xl">
         <Stack spacing="24px">
           <Heading textAlign="center" size="2xl">
             Welcome to Choral
@@ -42,14 +71,55 @@ const Home: NextPage = () => {
             onChange={(e) => setArtist(e.target.value)}
             borderColor="blue.700"
           />
-          <Button
-            onClick={() => {
-              router.push(`/artist/${artist}`);
-            }}
-            colorScheme="blue"
-          >
-            Begin!
-          </Button>
+          {(artist.length === 0 && (
+            <Button colorScheme={"purple"}>Enter a name to get started!</Button>
+          )) ||
+            (!loading && (
+              <>
+                <Button
+                  onClick={() => {
+                    router.push(`/challenge/${artist}`);
+                  }}
+                  colorScheme={"purple"}
+                  isDisabled={!valid}
+                >
+                  {!valid ? "Artist not found" : `${artist} Daily Challenge`}
+                </Button>
+                <Button
+                  onClick={() => {
+                    router.push(`/artist/${artist}`);
+                  }}
+                  colorScheme={"green"}
+                  isDisabled={!valid}
+                >
+                  {!valid ? "Artist not found" : `${artist} Free play`}
+                </Button>
+                <Button
+                  onClick={() => {
+                    router.push(`/artist/${artist}`);
+                  }}
+                  colorScheme={"red"}
+                  isDisabled={true}
+                >
+                  {!valid
+                    ? "Artist not found"
+                    : `${artist} Multiplayer (coming soon)`}
+                </Button>
+              </>
+            )) ||
+            (loading && (
+              <>
+                <Button colorScheme={valid ? "blue" : "gray"}>
+                  <Spinner />{" "}
+                </Button>
+                <Button colorScheme={valid ? "blue" : "gray"}>
+                  <Spinner />{" "}
+                </Button>
+                <Button colorScheme={valid ? "blue" : "gray"}>
+                  <Spinner />{" "}
+                </Button>
+              </>
+            ))}
         </Stack>
       </Container>
     </>

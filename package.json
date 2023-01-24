@@ -29,12 +29,14 @@
     "next": "13.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "seedrandom": "^3.0.5",
     "typescript": "4.9.4",
     "user-agents": "^1.0.1257"
   },
   "devDependencies": {
     "@types/html-to-text": "^9.0.0",
     "@types/iconv": "^3.0.1",
+    "@types/seedrandom": "^3.0.4",
     "prettier": "^2.8.2"
   }
 }
