@@ -5,6 +5,7 @@ import { AnimatePresence } from "framer-motion";
 import { Suspense, useEffect, useState } from "react";
 import Loading from "./loading";
 import Router from "next/router";
+import Script from "next/script";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const [loading, setLoading] = useState(false);
@@ -22,6 +23,21 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <ChakraProvider theme={theme}>
       <AnimatePresence mode="wait" initial={false}>
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-Z698EBHY25"
+        ></Script>
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-Z698EBHY25');
+            
+            window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+            ga('create', 'G-Z698EBHY25', 'auto');
+            ga('send', 'pageview');`}
+        </Script>
         {loading ? (
           <Loading />
         ) : (

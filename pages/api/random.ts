@@ -12,7 +12,7 @@ export default async function handler(
 ) {
   let songs: Song[] = [];
   let seedRandom = seedrandom();
-  if (req.query.challenge)
+  if (req.query?.challenge)
     seedRandom = seedrandom(
       `${
         new Date().getUTCDay() +
@@ -21,14 +21,12 @@ export default async function handler(
       }`
     );
 
-  if (req.query) {
-    const artist = req.query.artist as string;
+  if (!req.query) return res.status(404);
 
-    if (artist) songs = await getArtistSongs(artist);
-    if (songs.length === 0) res.end(404);
-  }
+  const artist = req.query.artist as string;
 
-  if (songs.length === 0) songs = await getChart(new Date());
+  if (artist) songs = await getArtistSongs(artist);
+  if (songs.length === 0) return res.status(404);
 
   let lyrics: Lyrics | undefined;
   while (!lyrics || (lyrics.lyrics.length === 0 && songs.length > 0)) {
@@ -38,7 +36,7 @@ export default async function handler(
     lyrics = await getLyrics(choice.artist, choice.title, choice.url);
   }
 
-  if (lyrics.lyrics.length === 0) res.status(404);
+  if (lyrics.lyrics.length === 0) return res.status(404);
 
-  res.status(200).json(lyrics);
+  return res.status(200).json(lyrics);
 }
