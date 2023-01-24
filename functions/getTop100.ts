@@ -2,6 +2,7 @@
 import cheerio from "cheerio";
 import moment from "moment";
 import { htmlToText } from "html-to-text";
+import { string } from "joi";
 
 const BILLBOARD_BASE_URL = "https://www.billboard.com";
 const BILLBOARD_CHARTS_URL = `${BILLBOARD_BASE_URL}/charts/`;
@@ -14,6 +15,7 @@ export interface Song {
   cover?: string;
   rank?: number;
   url?: string;
+  albumCover?: string;
 }
 
 export const getChart = async (date: Date) => {

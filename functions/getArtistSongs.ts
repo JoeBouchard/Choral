@@ -20,7 +20,6 @@ export const getArtistSongs = async (artist: string) => {
   if (rawText.includes("SEARCH RESULTS FOR")) {
     const path = rawText.match(/artist\/.*\/[0-9]*/g);
     if (!path) return [];
-    console.log(path);
     const res2 = await fetch(`https://www.lyrics.com/${path[0]}`);
     const html2 = await res2.text();
     rawText = htmlToText(html2);
@@ -42,5 +41,8 @@ export const getArtistSongs = async (artist: string) => {
           url: rawTitle.replaceAll("]", ""),
         });
     });
+
+  // console.log(songs);
+
   return songs;
 };

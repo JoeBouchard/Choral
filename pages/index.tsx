@@ -6,13 +6,20 @@ import {
   Button,
   Container,
   Heading,
+  HStack,
   Input,
+  Spacer,
   Spinner,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import { eraseCookie, setCookie } from "../functions/cookieFunctions";
+import { AiOutlineLogout as Logout } from "react-icons/ai";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +27,10 @@ const Home: NextPage = () => {
   const [artist, setArtist] = useState("");
   const [valid, setValid] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const router = useRouter();
+
+  const { data: session } = useSession();
 
   useEffect(() => {
     setValid(false);
@@ -47,6 +57,12 @@ const Home: NextPage = () => {
   useEffect(() => {
     console.log(!valid, loading);
   }, [valid, loading]);
+
+  useEffect(() => {
+    console.log(session);
+    //@ts-ignore
+    setCookie("spotifyToken", session?.accessToken || "", 2);
+  }, [session]);
 
   return (
     <>
@@ -94,13 +110,7 @@ const Home: NextPage = () => {
                 >
                   {!valid ? "Artist not found" : `${artist} Free play`}
                 </Button>
-                <Button
-                  onClick={() => {
-                    router.push(`/artist/${artist}`);
-                  }}
-                  colorScheme={"red"}
-                  isDisabled={true}
-                >
+                <Button colorScheme={"red"} isDisabled={true}>
                   {!valid
                     ? "Artist not found"
                     : `${artist} Multiplayer (coming soon)`}
@@ -120,6 +130,67 @@ const Home: NextPage = () => {
                 </Button>
               </>
             ))}
+          <hr />
+
+          {!session && (
+            <Text
+              bg="green.400"
+              color="black"
+              align="center"
+              fontWeight="semibold"
+              size="lg"
+              p={2}
+              borderRadius={10}
+              _hover={{ bg: "green.500" }}
+            >
+              <Link href="/api/auth/signin">
+                Log in with Spotify for challenges made just for you!
+              </Link>
+            </Text>
+          )}
+          {session && session.user && (
+            <Stack>
+              <HStack alignSelf="center">
+                <Text fontSize="xl">Challenges for {session.user?.name}</Text>
+                <img
+                  src={session.user.image || ""}
+                  alt="pfp"
+                  width={64}
+                  height={64}
+                  style={{ borderRadius: "100%" }}
+                />
+                <Button
+                  ml={20}
+                  bg="blue.800"
+                  color="gray.50"
+                  _hover={{ bg: "blue.900", color: "white" }}
+                  onClick={() => {
+                    eraseCookie("spotifyToken");
+                    router.push("/api/auth/signout");
+                  }}
+                >
+                  Log out
+                </Button>
+              </HStack>
+              <Button
+                onClick={() => {
+                  router.push(`/spotify/top50`);
+                }}
+                colorScheme={"green"}
+              >
+                Your Top 50 Challenge
+              </Button>
+              <Button colorScheme={"red"} isDisabled={true}>
+                Pick a Playlist challenge{" (Coming soon)"}
+              </Button>
+              <Button colorScheme={"red"} isDisabled={true}>
+                Top Album Challenge{" (Coming soon)"}
+              </Button>
+              <Button colorScheme={"red"} isDisabled={true}>
+                Top Artist Challenge{" (Coming soon)"}
+              </Button>
+            </Stack>
+          )}
         </Stack>
       </Container>
     </>
