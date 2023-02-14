@@ -149,9 +149,9 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
               Found a bug? Contact me at{" "}
               <a
                 style={{ textDecoration: "underline" }}
-                href="mailto:choral.io.dev@gmail.com"
+                href="mailto:choral.io.devs@gmail.com"
               >
-                choral.io.dev@gmail.com
+                choral.io.devs@gmail.com
               </a>
             </p>
           </Box>
