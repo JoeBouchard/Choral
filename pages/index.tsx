@@ -67,14 +67,14 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Choral</title>
+        <title>Chorals</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Container bgColor="white" borderRadius={4} p={4} mt={"10vh"} shadow="xl">
         <Stack spacing="24px">
           <Heading textAlign="center" size="2xl">
-            Welcome to Choral
+            Welcome to Chorals!
           </Heading>
           <Heading textAlign="center" size="lg" fontStyle="italic">
             The song guessing game

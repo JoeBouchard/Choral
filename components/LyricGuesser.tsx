@@ -30,6 +30,8 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
   const [guess, setGuess] = useState("");
   const [titleGuess, setTitleGuess] = useState("");
   const [lastGuess, setLastGuess] = useState<guessTypes>();
+  const [isTitleGuessed, setIsTitleGuessed] = useState(false);
+  const [gaveUp, setGaveUp] = useState(false);
 
   const guessBtn = useRef<HTMLInputElement>(null);
 
@@ -125,19 +127,7 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
       titleGuess.toLowerCase().replaceAll(/\W/g, "") ===
       title.toLowerCase().replaceAll(/\W/g, "")
     ) {
-      lyrics
-        .toLowerCase()
-        .replaceAll(/[^A-Za-z \n\-0-9]/g, "")
-        .replaceAll(/[\n\-]/g, " ")
-        .split(" ")
-        .forEach((l) => addGuessed({ word: l, valid: true }));
-
-      title
-        .toLowerCase()
-        .replaceAll(/[^A-Za-z \n\-0-9]/g, "")
-        .replaceAll(/[\n\-]/g, " ")
-        .split(" ")
-        .forEach((l) => addGuessed({ word: l, valid: true }));
+      setIsTitleGuessed(true);
     }
   }, [titleGuess]);
 
@@ -217,14 +207,14 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
                     animate={
                       guessed.found.includes(
                         t.toLowerCase().replaceAll(/\W/g, "")
-                      )
+                      ) || isTitleGuessed
                         ? "revealed"
                         : "covered"
                     }
                   >
                     {guessed.found.includes(
                       t.toLowerCase().replaceAll(/\W/g, "")
-                    )
+                    ) || isTitleGuessed
                       ? t
                       : t.replaceAll(/\w/g, "X")}
                   </motion.span>{" "}
@@ -264,7 +254,8 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
             </Button>
             <Button
               onClick={() => {
-                setTitleGuess(title);
+                setGaveUp(true);
+                setIsTitleGuessed(true);
               }}
               colorScheme="red"
             >
@@ -327,14 +318,14 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
                     animate={
                       guessed.found.includes(
                         w.toLowerCase().replaceAll(/\W/g, "")
-                      )
+                      ) || isTitleGuessed
                         ? "revealed"
                         : "covered"
                     }
                   >
                     {guessed.found.includes(
                       w.toLowerCase().replaceAll(/\W/g, "")
-                    )
+                    ) || isTitleGuessed
                       ? w
                       : w.replaceAll(/\w/g, "X")}
                   </motion.span>{" "}

@@ -1,5 +1,5 @@
 import type { AppProps } from "next/app";
-import { ChakraProvider } from "@chakra-ui/react";
+import { Box, ChakraProvider } from "@chakra-ui/react";
 import { theme } from "../chakra/theme";
 import { AnimatePresence } from "framer-motion";
 import { Suspense, useEffect, useState } from "react";
@@ -47,6 +47,34 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
               <Component {...pageProps} />
             </Suspense>
           )}
+          <Box
+            mt={40}
+            pt={10}
+            height="300px"
+            bg="blackAlpha.50"
+            textColor="gray.500"
+            textAlign="center"
+          >
+            <p>Choral &copy;{new Date().getFullYear()}</p>
+            <p>
+              Enjoying the game? Support me on{" "}
+              <a
+                style={{ textDecoration: "underline" }}
+                href="https://www.buymeacoffee.com/chorals"
+              >
+                Buy Me A Coffee!
+              </a>
+            </p>
+            <p>
+              Found a bug? Contact me at{" "}
+              <a
+                style={{ textDecoration: "underline" }}
+                href="mailto:choral.io.dev@gmail.com"
+              >
+                choral.io.dev@gmail.com
+              </a>
+            </p>
+          </Box>
         </AnimatePresence>
       </ChakraProvider>
     </SessionProvider>
