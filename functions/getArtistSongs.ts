@@ -11,10 +11,11 @@ export const getArtistSongs = async (artist: string) => {
   const userAgent = new UserAgent();
   headers.set("user-agent", userAgent.toString());
 
-  const parsedArtist = artist.replaceAll(/\W/g, "-");
+  const parsedArtist = artist.replaceAll(/ /g, "-");
   const res = await fetch(`${ROOT_URL}${parsedArtist}`, {
     headers: headers,
   });
+  console.log(`${ROOT_URL}${parsedArtist}`);
   const html = await res.text();
   let rawText = htmlToText(html);
   if (rawText.includes("SEARCH RESULTS FOR")) {
@@ -23,11 +24,12 @@ export const getArtistSongs = async (artist: string) => {
     const res2 = await fetch(`https://www.lyrics.com/${path[0]}`);
     const html2 = await res2.text();
     rawText = htmlToText(html2);
+    artist = decodeURI(path[0].split("/")[1].replaceAll("-", " "));
   }
   //   \/[0-9]*\/[A-Za-z\+]*\/[A-Za-z0-9\%\+]
 
   rawText
-    .match(/\/lyric.*\/[0-9]*\/[A-Za-z\+]*\/[A-Za-z0-9\%\+]*/g)
+    .match(/\/lyric.*\/[0-9]*\/[A-Za-z%0-9\+]*\/[A-Za-z0-9\%\+]*/g)
     ?.forEach((rawTitle) => {
       const title = decodeURI(rawTitle.split("/")[4])
         .replaceAll("+", " ")

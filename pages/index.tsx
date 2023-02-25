@@ -25,6 +25,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 const Home: NextPage = () => {
   const [artist, setArtist] = useState("");
+  const [loadedArtist, setLoadedArtist] = useState("");
   const [valid, setValid] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -47,6 +48,7 @@ const Home: NextPage = () => {
         .then((r) => {
           console.log(r);
           setValid(r.valid);
+          setLoadedArtist(r.artist);
           setLoading(false);
         });
     }, 500);
@@ -55,11 +57,6 @@ const Home: NextPage = () => {
   }, [artist]);
 
   useEffect(() => {
-    console.log(!valid, loading);
-  }, [valid, loading]);
-
-  useEffect(() => {
-    console.log(session);
     //@ts-ignore
     setCookie("spotifyToken", session?.accessToken || "", 2);
   }, [session]);
@@ -94,26 +91,28 @@ const Home: NextPage = () => {
               <>
                 <Button
                   onClick={() => {
-                    router.push(`/challenge/${artist}`);
+                    router.push(`/challenge/${loadedArtist}`);
                   }}
                   colorScheme={"purple"}
                   isDisabled={!valid}
                 >
-                  {!valid ? "Artist not found" : `${artist} Daily Challenge`}
+                  {!valid
+                    ? "Artist not found"
+                    : `${loadedArtist} Daily Challenge`}
                 </Button>
                 <Button
                   onClick={() => {
-                    router.push(`/artist/${artist}`);
+                    router.push(`/artist/${loadedArtist}`);
                   }}
                   colorScheme={"green"}
                   isDisabled={!valid}
                 >
-                  {!valid ? "Artist not found" : `${artist} Free play`}
+                  {!valid ? "Artist not found" : `${loadedArtist} Free play`}
                 </Button>
                 <Button colorScheme={"red"} isDisabled={true}>
                   {!valid
                     ? "Artist not found"
-                    : `${artist} Multiplayer (coming soon)`}
+                    : `${loadedArtist} Multiplayer (coming soon)`}
                 </Button>
               </>
             )) ||

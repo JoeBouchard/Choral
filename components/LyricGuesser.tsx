@@ -400,18 +400,20 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
           <ModalHeader>You gave up!</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <p>
-              The song was <b>{title}</b> by {artist}.
-            </p>
-            <p>
-              It has {allWords.length} distinct words, of which you guessed{" "}
-              {guessed.found.length}, or{" "}
-              {Math.round((guessed.found.length * 10000) / allWords.length) /
-                100}
-              %
-            </p>
-            <p>Your score was:</p>
-            <Table>
+            <Box p={4}>
+              <p>
+                The song was <b>{title}</b> by {artist}.
+              </p>
+              <p>
+                It has {allWords.length} distinct words, of which you guessed{" "}
+                {guessed.found.length}, or{" "}
+                {Math.round((guessed.found.length * 10000) / allWords.length) /
+                  100}
+                %
+              </p>
+              <p>Your score was:</p>
+            </Box>
+            <Table size="sm">
               <Tbody>
                 <Tr>
                   <Td>Unguessed words</Td>
@@ -425,7 +427,7 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
                     }
                   </Td>
                   <Td>x-200</Td>
-                  <Td>
+                  <Td fontWeight="600">
                     {allWords.filter(
                       (a) =>
                         !guessed.found.includes(a) &&
@@ -437,15 +439,15 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
                   <Td>Correct Guesses</Td>
                   <Td>{guessed.found.length}</Td>
                   <Td>x100</Td>
-                  <Td>{guessed.found.length * 100}</Td>
+                  <Td fontWeight="600">{guessed.found.length * 100}</Td>
                 </Tr>
                 <Tr>
                   <Td>Incorrect Guesses</Td>
                   <Td>{guessed.invalid.length}</Td>
                   <Td>x-50</Td>
-                  <Td>{guessed.invalid.length * -50}</Td>
+                  <Td fontWeight="600">{guessed.invalid.length * -50}</Td>
                 </Tr>
-                <Tr fontWeight="600" borderTop="2px solid #000">
+                <Tr fontWeight="800" borderTop="2px solid #000">
                   <Td>Total</Td>
                   <Td></Td>
                   <Td></Td>
@@ -464,7 +466,7 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
             </Table>
           </ModalBody>
           <ModalFooter>
-            <Stack m="0 auto">
+            <Stack m="0 auto" w="100%">
               {window && !window.location.href.includes("challenge") && (
                 <Button
                   colorScheme="green"
@@ -500,19 +502,21 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
         >
           <ModalHeader>Congratulations!</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            <p>
-              The song was <b>{title}</b> by {artist}.
-            </p>
-            <p>
-              It has {allWords.length} distinct words, of which you guessed{" "}
-              {guessed.found.length}, or{" "}
-              {Math.round((guessed.found.length * 10000) / allWords.length) /
-                100}
-              %
-            </p>
-            <p>Your score was:</p>
-            <Table>
+          <ModalBody p={0}>
+            <Box p={4}>
+              <p>
+                The song was <b>{title}</b> by {artist}.
+              </p>
+              <p>
+                It has {allWords.length} distinct words, of which you guessed{" "}
+                {guessed.found.length}, or{" "}
+                {Math.round((guessed.found.length * 10000) / allWords.length) /
+                  100}
+                %
+              </p>
+              <p>Your score was:</p>
+            </Box>
+            <Table size="sm" p={0}>
               <Tbody>
                 <Tr>
                   <Td>Unguessed words</Td>
@@ -526,7 +530,7 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
                     }
                   </Td>
                   <Td>x200</Td>
-                  <Td>
+                  <Td fontWeight="600">
                     {allWords.filter(
                       (a) =>
                         !guessed.found.includes(a) &&
@@ -538,15 +542,15 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
                   <Td>Correct Guesses</Td>
                   <Td>{guessed.found.length}</Td>
                   <Td>x100</Td>
-                  <Td>{guessed.found.length * 100}</Td>
+                  <Td fontWeight="600">{guessed.found.length * 100}</Td>
                 </Tr>
                 <Tr>
                   <Td>Incorrect Guesses</Td>
                   <Td>{guessed.invalid.length}</Td>
                   <Td>x-50</Td>
-                  <Td>{guessed.invalid.length * -50}</Td>
+                  <Td fontWeight="600">{guessed.invalid.length * -50}</Td>
                 </Tr>
-                <Tr fontWeight="600" borderTop="2px solid #000">
+                <Tr fontWeight="800" borderTop="2px solid #000">
                   <Td>Total</Td>
                   <Td></Td>
                   <Td></Td>
@@ -565,7 +569,7 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
             </Table>
           </ModalBody>
           <ModalFooter>
-            <Stack m="0 auto">
+            <Stack m="0 auto" w="100%">
               {window && !window.location.href.includes("challenge") && (
                 <Button
                   colorScheme="green"

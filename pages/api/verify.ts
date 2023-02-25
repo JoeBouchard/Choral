@@ -8,7 +8,7 @@ import { red } from "@mui/material/colors";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<{ valid: boolean }>
+  res: NextApiResponse<{ valid: boolean; artist?: string }>
 ) {
   let songs: Song[] = [];
 
@@ -17,7 +17,7 @@ export default async function handler(
 
     if (artist) songs = (await getArtistSongs(artist)).filter((s) => s);
     if (songs.length === 0) return res.send({ valid: false });
-    return res.send({ valid: true });
+    return res.send({ valid: true, artist: songs[0].artist });
   }
   return res.send({ valid: false });
 }
