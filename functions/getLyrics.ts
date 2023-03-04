@@ -37,7 +37,26 @@ export const getLyrics = async (artist: string, song: string, url?: string) => {
   let parsedText = parsedText1[1].replaceAll(/\[.*\]/g, "");
   const sections = parsedText.split("\n\n\n");
   lyrics.cover = "";
-  lyrics.lyrics = sections[1].length < 100 ? sections[2] : sections[1];
+  lyrics.lyrics = sections[2];
+
+  if (sections[2].match(/[0-9]+(\/[a-zA-Z+]+)+/g)) {
+    console.log("MATCH");
+    lyrics.lyrics = sections[1];
+  }
+
+  if (lyrics.lyrics.includes("LYRICS CURRENTLY UNAVAILABLE…")) return;
+
+  if (lyrics.lyrics.toUpperCase() === lyrics.lyrics) {
+    // console.log(
+    //   sections[3],
+    //   lyrics.lyrics === lyrics.lyrics.toUpperCase(),
+    //   sections[2]
+    // );
+    lyrics.lyrics = sections[3];
+  }
+
+  console.log(lyrics.lyrics);
+  if (lyrics.lyrics.includes("LYRICS CURRENTLY UNAVAILABLE…")) return;
 
   if (!lyrics.lyrics || lyrics.lyrics.endsWith("...")) return;
   return lyrics;

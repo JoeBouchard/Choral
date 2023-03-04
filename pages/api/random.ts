@@ -32,7 +32,7 @@ export default async function handler(
   while (!lyrics || (lyrics.lyrics.length === 0 && songs.length > 0)) {
     const choice = songs[Math.floor(seedRandom.quick() * songs.length)];
     songs = songs.filter((val) => val.title !== choice.title);
-    console.log(songs);
+    // console.log(songs);
     lyrics = await getLyrics(choice.artist, choice.title, choice.url);
   }
 
