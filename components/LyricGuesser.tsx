@@ -27,7 +27,8 @@ import {
   Td,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
+import Loading from "../pages/loading";
 
 export enum guessTypes {
   guessed = "guessed",
@@ -43,7 +44,9 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
   const [lastGuess, setLastGuess] = useState<guessTypes>();
   const [isTitleGuessed, setIsTitleGuessed] = useState(false);
   const [gaveUp, setGaveUp] = useState(false);
-  const [modalOpen, setModalOpen] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const [allWords] = useState(
     lyrics
       .toLowerCase()
@@ -144,36 +147,46 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
     }
   };
 
+  // useEffect(() => {
+  //   Router.events.on("routeChangeStart", () => setLoading(true));
+  //   Router.events.on("routeChangeComplete", () => setLoading(false));
+  //   Router.events.on("routeChangeError", () => setLoading(false));
+  //   return () => {
+  //     Router.events.off("routeChangeStart", () => setLoading(true));
+  //     Router.events.off("routeChangeComplete", () => setLoading(false));
+  //     Router.events.off("routeChangeError", () => setLoading(false));
+  //   };
+  // }, [Router.events]);
+
+  useEffect(() => {
+    console.log("resetting");
+    setGaveUp(false);
+    setGuess("");
+    setLastGuess(undefined);
+    setIsTitleGuessed(false);
+    setTitleGuess("");
+    setModalOpen(false);
+  }, [lyrics]);
+
   useEffect(() => {
     if (
       titleGuess.toLowerCase().replaceAll(/\W/g, "") ===
       title.toLowerCase().replaceAll(/\W/g, "")
     ) {
       setIsTitleGuessed(true);
+      setModalOpen(true);
     }
   }, [titleGuess]);
 
-  if (title === "" || lyrics === "")
-    return (
-      <Box m={4} bg="white" p={4} borderRadius={4}>
-        <Skeleton height="45px" my={4} />
-        <div
-          style={{
-            height: "75vh",
-            overflowX: "scroll",
-            display: "flex",
-            flexDirection: "column",
-            flexWrap: "wrap",
-            columnGap: 10,
-            rowGap: 5,
-          }}
-        >
-          {new Array(100).fill(undefined).map((p, k) => (
-            <Skeleton key={k} height="30px" w="45vw" />
-          ))}
-        </div>
-      </Box>
-    );
+  useEffect(() => {
+    if (gaveUp) setModalOpen(true);
+  }, [gaveUp]);
+
+  useEffect(() => {
+    console.log(isTitleGuessed, gaveUp, modalOpen);
+  }, [modalOpen]);
+
+  if (loading || title === "" || lyrics === "") return <Loading />;
 
   return (
     <>
@@ -387,10 +400,7 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
           ))}
         </Box>
       </Box>
-      <Modal
-        isOpen={isTitleGuessed && gaveUp && modalOpen}
-        onClose={() => setModalOpen(false)}
-      >
+      <Modal isOpen={gaveUp && modalOpen} onClose={() => setModalOpen(false)}>
         <ModalOverlay />
         <ModalContent
           borderColor="red.700"
