@@ -38,5 +38,12 @@ export default async function handler(
 
   if (lyrics.lyrics.length === 0) return res.status(404);
 
-  return res.status(200).json(lyrics);
+  console.log(lyrics.title.replaceAll(/%[0-9A-Za-z]{2}/g, ""));
+
+  return res
+    .status(200)
+    .json({
+      ...lyrics,
+      title: lyrics.title.replaceAll(/%[0-9A-Za-z]{2}/g, ""),
+    });
 }
