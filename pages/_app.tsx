@@ -7,6 +7,7 @@ import Loading from "./loading";
 import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
 import HelpPopup from "../components/HelpPopup";
+import InstallPrompt from "../components/InstallPrompt";
 
 const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
   return (
@@ -59,6 +60,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
               </a>
             </p>
           </Box>
+          <InstallPrompt />
           <HelpPopup />
         </AnimatePresence>
       </ChakraProvider>
