@@ -46,6 +46,8 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
   const [gaveUp, setGaveUp] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hintsUsed, setHintsUsed] = useState(0);
+  const [showHintModal, setShowHintModal] = useState<undefined | string>();
 
   const [allWords] = useState(
     lyrics
@@ -60,32 +62,27 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
 
   const guessBtn = useRef<HTMLInputElement>(null);
 
-  const [guessed, addGuessed] = useReducer(
-    (
-      state: { found: string[]; invalid: string[] },
-      action: { word: string; valid: boolean }
-    ) => {
-      if (
-        state.found.includes(action.word) ||
-        state.invalid.includes(action.word)
-      )
-        return state;
-      if (action.valid) {
-        return {
-          found: [...state.found, action.word].sort(),
-          invalid: [...state.invalid],
-        };
-      }
-      return {
-        found: [...state.found],
-        invalid: [...state.invalid, action.word].sort(),
-      };
-    },
-    {
-      found: [],
-      invalid: [],
+  const [guessed, setGuessed] = useState<{
+    found: string[];
+    invalid: string[];
+  }>({ found: [], invalid: [] });
+
+  const addGuessed = (word: string, valid: boolean) => {
+    if (guessed.found.includes(word) || guessed.invalid.includes(word)) return;
+    if (valid) {
+      let newFound = [...guessed.found, word];
+      newFound.sort();
+      setGuessed({
+        found: newFound,
+        invalid: [...guessed.invalid],
+      });
+      return;
     }
-  );
+    setGuessed({
+      found: [...guessed.found],
+      invalid: [...guessed.invalid, word].sort(),
+    });
+  };
 
   const textVariations = {
     covered: {
@@ -136,7 +133,7 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
       const valid =
         formattedLyrics.includes(formattedGuess) ||
         formattedTitle.includes(formattedGuess);
-      addGuessed({ word: formattedGuess, valid });
+      addGuessed(formattedGuess, valid);
       setLastGuess(valid ? guessTypes.found : guessTypes.invalid);
     }
 
@@ -166,6 +163,8 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
     setIsTitleGuessed(false);
     setTitleGuess("");
     setModalOpen(false);
+    setHintsUsed(0);
+    setGuessed({ found: [], invalid: [] });
   }, [lyrics]);
 
   useEffect(() => {
@@ -273,7 +272,10 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
                   let choice = "";
                   let counter = 0;
 
-                  while (guessed.found.includes(choice) && counter < 20) {
+                  while (
+                    (guessed.found.includes(choice) || choice.length === 0) &&
+                    counter < 20
+                  ) {
                     choice =
                       formattedLyrics[
                         Math.floor(Math.random() * formattedLyrics.length)
@@ -281,8 +283,12 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
                     counter += 1;
                   }
 
-                  addGuessed({ word: choice, valid: true });
-                  guessBtn.current?.focus();
+                  addGuessed(choice, true);
+                  setHintsUsed(hintsUsed + 1);
+                  setShowHintModal(choice);
+                  setTimeout(() => {
+                    setShowHintModal(undefined);
+                  }, 3000);
                 }}
                 colorScheme="purple"
               >
@@ -447,15 +453,23 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
                 </Tr>
                 <Tr>
                   <Td>Correct Guesses</Td>
-                  <Td>{guessed.found.length}</Td>
+                  <Td>{guessed.found.length - hintsUsed}</Td>
                   <Td>x100</Td>
-                  <Td fontWeight="600">{guessed.found.length * 100}</Td>
+                  <Td fontWeight="600">
+                    {(guessed.found.length - hintsUsed) * 100}
+                  </Td>
                 </Tr>
                 <Tr>
                   <Td>Incorrect Guesses</Td>
                   <Td>{guessed.invalid.length}</Td>
                   <Td>x-50</Td>
                   <Td fontWeight="600">{guessed.invalid.length * -50}</Td>
+                </Tr>
+                <Tr>
+                  <Td>Hints</Td>
+                  <Td>{hintsUsed}</Td>
+                  <Td>x-100</Td>
+                  <Td fontWeight="600">{hintsUsed * -100}</Td>
                 </Tr>
                 <Tr fontWeight="800" borderTop="2px solid #000">
                   <Td>Total</Td>
@@ -468,8 +482,9 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
                         !guessed.invalid.includes(a)
                     ).length *
                       -200 +
-                      guessed.found.length * 100 +
-                      guessed.invalid.length * -50}
+                      (guessed.found.length - hintsUsed) * 100 +
+                      guessed.invalid.length * -50 +
+                      hintsUsed * -100}
                   </Td>
                 </Tr>
               </Tbody>
@@ -550,15 +565,23 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
                 </Tr>
                 <Tr>
                   <Td>Correct Guesses</Td>
-                  <Td>{guessed.found.length}</Td>
+                  <Td>{guessed.found.length - hintsUsed}</Td>
                   <Td>x100</Td>
-                  <Td fontWeight="600">{guessed.found.length * 100}</Td>
+                  <Td fontWeight="600">
+                    {(guessed.found.length - hintsUsed) * 100}
+                  </Td>
                 </Tr>
                 <Tr>
                   <Td>Incorrect Guesses</Td>
                   <Td>{guessed.invalid.length}</Td>
                   <Td>x-50</Td>
                   <Td fontWeight="600">{guessed.invalid.length * -50}</Td>
+                </Tr>
+                <Tr>
+                  <Td>Hints Used</Td>
+                  <Td>{hintsUsed}</Td>
+                  <Td>x-100</Td>
+                  <Td fontWeight="600">{hintsUsed * -100}</Td>
                 </Tr>
                 <Tr fontWeight="800" borderTop="2px solid #000">
                   <Td>Total</Td>
@@ -571,8 +594,9 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
                         !guessed.invalid.includes(a)
                     ).length *
                       200 +
-                      guessed.found.length * 100 +
-                      guessed.invalid.length * -50}
+                      (guessed.found.length - hintsUsed) * 100 +
+                      guessed.invalid.length * -50 +
+                      hintsUsed * -100}
                   </Td>
                 </Tr>
               </Tbody>
@@ -599,6 +623,28 @@ const LyricGuesser: React.FC<Lyrics> = ({ title, lyrics, artist }) => {
               </Button>
             </Stack>
           </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={showHintModal !== undefined} onClose={() => {}}>
+        <ModalContent
+          borderColor="purple.700"
+          borderRadius="16px"
+          borderWidth="8px"
+        >
+          <ModalBody>
+            <Text>
+              Your hint is &quot;{showHintModal}&quot;! It is used{" "}
+              {
+                lyrics
+                  .toLowerCase()
+                  .replaceAll(/[^A-Za-z \n\-0-9]/g, "")
+                  .replaceAll(/[\n\-]/g, " ")
+                  .split(" ")
+                  .filter((w) => w === showHintModal).length
+              }{" "}
+              times!
+            </Text>
+          </ModalBody>
         </ModalContent>
       </Modal>
     </>
